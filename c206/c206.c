@@ -116,17 +116,12 @@ void DLInsertFirst (tDLList *L, int val) {
 		newElem->rptr = L->First;
 		newElem->lptr = NULL;
 
-		if(L->First == NULL) {	// pokud zadavame uplne prvni polozku v seznamu, musime upravit i ukazatel na polozku Last
-			
+		if(L->First == NULL)		// pokud zadavame uplne prvni polozku v seznamu, musime upravit i ukazatel na polozku Last
 			L->Last = newElem;
-			L->First = newElem;	
-		}
-		else { 
-			
+		else 
 			L->First->lptr = newElem;
-			L->First = newElem;
-		}
-				// nastaveni prvku jako prvniho
+
+		L->First = newElem;			// nastaveni prvku jako prvniho
 	}	
 	else 
 		DLError();
@@ -147,16 +142,12 @@ void DLInsertLast(tDLList *L, int val) {
 		newElem->rptr = NULL;
 		newElem->lptr = L->Last;
 
-		if(L->First == NULL) {	// pokud zadavame uplne prvni polozku v seznamu, musime upravit i ukazatel na First
-			
+		if(L->First == NULL)		// pokud zadavame uplne prvni polozku v seznamu, musime upravit i ukazatel na First
 			L->First = newElem;
-			L->Last = newElem;
-		}
-		else {
-			
+		else
 			L->Last->rptr = newElem;
-			L->Last = newElem;			// nastaveni prvku jako prvniho
-		}	
+
+		L->Last = newElem;			// nastaveni prvku jako prvniho
 	}	
 	else 
 		DLError();

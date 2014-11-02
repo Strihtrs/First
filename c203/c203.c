@@ -77,12 +77,12 @@ void queueInit (tQueue* q) {
 */
 
 	if(q == NULL)
-		queueError(QERR_INIT);
+		queueError(QERR_INIT);		// kontrola
 	else {
-	q->b_index = 0;
+	q->b_index = 0;					// inicializace
 	q->f_index = 0;
 
-	for(int i = 0; i < QUEUE_SIZE; i++)
+	for(int i = 0; i < QUEUE_SIZE; i++)			// vkladani znaku '*'
 		q->arr[i] = '*';		
 	}
 }
@@ -94,7 +94,7 @@ int nextIndex (int index) {
 ** Funkci nextIndex budete vyu¾ívat v dal¹ích implementovanıch funkcích.
 */
 
-	return ((index + 1) % QUEUE_SIZE);
+	return ((index + 1) % QUEUE_SIZE);			// index na dalsi prvek
 }
 
 int queueEmpty (const tQueue* q) {
@@ -103,7 +103,7 @@ int queueEmpty (const tQueue* q) {
 ** Funkci implementujte jako jedinı pøíkaz.
 */
 
-	return ((q->b_index == q->f_index) ? 1 : 0);
+	return ((q->b_index == q->f_index) ? 1 : 0);	// kontrola, zda je fronta prazdna
 }	  
 
 int queueFull (const tQueue* q) {
@@ -112,7 +112,7 @@ int queueFull (const tQueue* q) {
 ** Funkci implementujte jako jedinı pøíkaz s vyu¾itím pomocné funkce nextIndex.
 */
 
-	return ((nextIndex(q->b_index) == q->f_index) ? 1 : 0);	  
+	return ((nextIndex(q->b_index) == q->f_index) ? 1 : 0);	  		// kontrola, zda je fronta plna
 }
 
 void queueFront (const tQueue* q, char* c) {
@@ -127,12 +127,12 @@ void queueFront (const tQueue* q, char* c) {
 ** Pøi implementaci vyu¾ijte døíve definované funkce queueEmpty.
 */
 
-	if(queueEmpty(q) == 0) {
+	if(queueEmpty(q) == 0) {			// vrati znak ze zacatku fronty
 
 		*c = q->arr[q->f_index];
 	}
 	else
-		queueError(QERR_FRONT);
+		queueError(QERR_FRONT);			// jinak chyba, pokud je fronta prazdna
 }
 
 void queueRemove (tQueue* q) {
@@ -143,12 +143,12 @@ void queueRemove (tQueue* q) {
 ** Pøi implementaci vyu¾ijte døíve definované funkce queueEmpty a nextIndex.
 */
 
-	if(queueEmpty(q) != 0)
+	if(queueEmpty(q) != 0)				// kontrola prazdnosti fronty
 		queueError(QERR_REMOVE);
 	
 	else {
 
-		q->f_index = nextIndex(q->f_index);
+		q->f_index = nextIndex(q->f_index);		// odstraneni znaku ze zacatku fronty
 	}
 }
 
@@ -161,10 +161,10 @@ void queueGet (tQueue* q, char* c) {
 ** queueFront a queueRemove.
 */
 
-	if(queueEmpty(q) != 0)
+	if(queueEmpty(q) != 0)			// kontrola, zda neni fronta prazdna
 		queueError(QERR_GET);
 	
-	else {
+	else {							// jinak vracim a mazu prvek ze zacatku fornty
 		queueFront(q, c);
 		queueRemove(q);
 	}
@@ -181,13 +181,13 @@ void queueUp (tQueue* q, char c) {
 ** Pøi implementaci vyu¾ijte døíve definovanıch funkcí queueFull a nextIndex.
 */
 
-	if(queueFull(q) != 0)
+	if(queueFull(q) != 0)			// kontrola, zda neni fronta prazdna
 		queueError(QERR_UP);
 
-	else {
+	else {							// vkladam znak c do fronty
 
-		q->arr[q->b_index] = c;
-		q->b_index = nextIndex(q->b_index);
+		q->arr[q->b_index] = c;					
+		q->b_index = nextIndex(q->b_index);		// posunuti b_indexu na dalsi prvek
 	}
 }
 /* Konec pøíkladu c203.c */

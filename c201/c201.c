@@ -67,8 +67,8 @@ void InitList (tList *L) {
 ** ¾e neinicializované promìnné mají nedefinovanou hodnotu.
 **/
 	
-
- solved = FALSE;                   /* V pøípadì øe¹ení, sma¾te tento øádek! */
+	L->First = NULL;
+	L->Act = NULL;
 }
 
 void DisposeList (tList *L) {
@@ -78,8 +78,16 @@ void DisposeList (tList *L) {
 ** uvolnìna voláním operace free.
 ***/
 	
+	while(L->First != NULL) {
 
- solved = FALSE;                   /* V pøípadì øe¹ení, sma¾te tento øádek! */
+		tElemPtr temp = L->First; // pomocna promenna
+		
+		L->First = L->First->ptr; // posunuti se v seznamu
+
+		free(temp);	// uvolneni prvku z pameti
+	}
+
+	L->Act = NULL; 	// nesmime zapomenout, ze v prazdnem seznamu neexistuje zadny aktivni prvek
 }
 
 void InsertFirst (tList *L, int val) {
@@ -88,9 +96,18 @@ void InsertFirst (tList *L, int val) {
 ** V pøípadì, ¾e není dostatek pamìti pro nový prvek pøi operaci malloc,
 ** volá funkci Error().
 **/
-    
 
- solved = FALSE;                   /* V pøípadì øe¹ení, sma¾te tento øádek! */
+	tElemPtr newElem;
+
+	if ((newElem = malloc(sizeof(struct tElem))) != NULL) {  /* Alokování nového prvku v seznamu */
+
+		newElem->data = val;		// zapsani dat do struktury
+		newElem->ptr = L->First;
+		
+		L->First = newElem;			// nastaveni jako prvni prvek seznamu
+
+	}
+	else Error();
 }
 
 void First (tList *L) {
@@ -100,8 +117,7 @@ void First (tList *L) {
 ** zda je seznam L prázdný.
 **/
 	
-
- solved = FALSE;                   /* V pøípadì øe¹ení, sma¾te tento øádek! */
+	L->Act = L->First;
 }
 
 void CopyFirst (tList *L, int *val) {
@@ -109,9 +125,13 @@ void CopyFirst (tList *L, int *val) {
 ** Prostøednictvím parametru val vrátí hodnotu prvního prvku seznamu L.
 ** Pokud je seznam L prázdný, volá funkci Error().
 **/
-	
-	
- solved = FALSE;                   /* V pøípadì øe¹ení, sma¾te tento øádek! */
+
+	if(L->First != NULL) 		// Prazdny seznam
+		*val = L->First->data;
+
+	else 						// Seznam existuje
+		Error();
+
 }
 
 void DeleteFirst (tList *L) {
@@ -121,8 +141,16 @@ void DeleteFirst (tList *L) {
 ** Pokud byl seznam L prázdný, nic se nedìje.
 **/
 	
+	if(L->First != NULL) {
 
- solved = FALSE;                   /* V pøípadì øe¹ení, sma¾te tento øádek! */
+		tElemPtr temp = L->First; // pomocny prvek
+
+		if(L->First == L->Act) // zjisteni aktivity prvku
+			L->Act = NULL;
+
+		L->First = L->First->ptr; // prepsani ukazatele na prvni polozku a uvolneni pameti
+		free(temp);
+	}
 }	
 
 void PostDelete (tList *L) {
@@ -132,8 +160,13 @@ void PostDelete (tList *L) {
 ** nic se nedìje.
 **/
 	
-	
- solved = FALSE;                   /* V pøípadì øe¹ení, sma¾te tento øádek! */
+	if((L->Act != NULL) && (L->Act->ptr != NULL)) {
+
+		tElemPtr temp = L->Act->ptr; // pomocny prvek
+
+		L->Act->ptr = temp->ptr; // zaruceni navaznosti seznamu a uvolneni pameti
+		free(temp);
+	}
 }
 
 void PostInsert (tList *L, int val) {
@@ -144,8 +177,20 @@ void PostInsert (tList *L, int val) {
 ** zavolá funkci Error().
 **/
 	
-	
- solved = FALSE;                   /* V pøípadì øe¹ení, sma¾te tento øádek! */
+	if(L->Act != NULL) {
+
+		tElemPtr newElem;
+
+		if((newElem = malloc(sizeof(struct tElem))) != NULL) {		// alokace noveho prvku
+
+			newElem->data = val; 			// ulozime data
+			
+			newElem->ptr = L->Act->ptr;		// novy prvek vlozime za aktivni a navazeme na dalsi
+			L->Act->ptr = newElem;
+		}
+		else
+			Error();
+	}
 }
 
 void Copy (tList *L, int *val) {
@@ -154,8 +199,12 @@ void Copy (tList *L, int *val) {
 ** Pokud seznam není aktivní, zavolá funkci Error().
 **/
 	
-	
- solved = FALSE;                   /* V pøípadì øe¹ení, sma¾te tento øádek! */
+	if(L->Act != NULL) {
+
+		*val = L->Act->data;
+	}
+	else
+		Error();
 }
 
 void Actualize (tList *L, int val) {
@@ -164,8 +213,10 @@ void Actualize (tList *L, int val) {
 ** Pokud seznam L není aktivní, nedìlá nic!
 **/
 	
-	
- solved = FALSE;                   /* V pøípadì øe¹ení, sma¾te tento øádek! */
+	if(L->Act != NULL) {
+
+		L->Act->data = val;
+	}
 }
 
 void Succ (tList *L) {
@@ -175,8 +226,14 @@ void Succ (tList *L) {
 ** Pokud seznam L není aktivní, nedìlá nic.
 **/
 	
-	
- solved = FALSE;                   /* V pøípadì øe¹ení, sma¾te tento øádek! */
+	if(L->Act != NULL) {
+
+		if(L->Act->ptr == NULL) 	// zjisteni, jestli neni prvek posledni v seznamu
+			L->Act = NULL;			// pokud ano, seznam se stane neaktivnim
+
+		else						// posunuti aktivity na dalsi prvek
+			L->Act = L->Act->ptr;
+	}
 }
 
 int Active (tList *L) {		
@@ -186,7 +243,7 @@ int Active (tList *L) {
 **/
 	
 	
- solved = FALSE;                   /* V pøípadì øe¹ení, sma¾te tento øádek! */
+ 	return L->Act == NULL ? FALSE : TRUE;	
 }
 
 /* Konec c201.c */
